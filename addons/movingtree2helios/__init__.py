@@ -1,9 +1,9 @@
 bl_info = {
-    "name": "Batch Export OBJ dynamic",
+    "name": "MovingTree2HELIOS",
     "blender": (3, 4, 0),
     "version": (0, 1, 0),
     "author": "Hannah Weiser",
-    "description": "Export moving scene to HELIOS",
+    "description": "Export dynamic scene to HELIOS",
     "category": "Scene"
 }
 

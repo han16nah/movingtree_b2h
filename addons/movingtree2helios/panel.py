@@ -34,18 +34,17 @@ class PT_helios(bpy.types.Panel):
         row.label(text="Scene XML")
         row.prop(props, "filepath", text="")
         
-        row = layout.row()
-        row.operator("helios.export", text="Export")
-        
         split = layout.split()
         col = split.column()
         col.label(text="Scene ID")
         col.prop(props, "scene_id", text="")
         
         col = split.column(align=True)
-        col.label(text="scene ID")
-        col.prop(props, "Scene_name", text="")
+        col.label(text="Scene name")
+        col.prop(props, "scene_name", text="")
 
+        row = layout.row()
+        row.operator("helios.export", text="Export")
 
 def export_button(self, context):
     self.layout.operator(

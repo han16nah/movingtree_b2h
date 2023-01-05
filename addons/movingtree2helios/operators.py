@@ -45,7 +45,8 @@ def write_scene(self, context, obj_paths_relative):
     sceneparts = ""
     
     
-    # get translation that HELIOS will apply
+    # get translation that HELIOS++ will apply (min coordinates of scene bounding box)
+    # will not be needed in the long run, because will be fixed within HELIOS++
     # get the global coordinates of all object bounding box corners    
     coords = np.vstack(
     tuple(np_matmul_coords(np.array(o.bound_box), o.matrix_world.copy())
@@ -60,7 +61,7 @@ def write_scene(self, context, obj_paths_relative):
     print(bfl)
     # convert to vector
     helios_shift = Vector(bfl)
-    helios_shift = Vector((-0.380767, -0.359708, -0.000033))
+    # helios_shift = Vector((-0.380767, -0.359708, -0.000033))
 
     
     objects = bpy.context.view_layer.objects
