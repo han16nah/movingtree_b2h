@@ -87,8 +87,8 @@ See the [open issues](https://github.com/han16nah/movingtree_b2h/issues) for a f
 <!-- LICENSE -->
 ## License
 
-TBD
-See `LICENSE.txt` for more information.
+This project is licensed under the MIT License.
+See [LICENSE.md](https://github.com/han16nah/movingtree_b2h/blob/main/LICENSE.md).
 
 
 
