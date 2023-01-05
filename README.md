@@ -69,17 +69,19 @@ After installation of the *moveleaves* add-on, you can animate leaf movement by 
 For exporting the animation to HELIOS++ format, we are using the *movingtree2helios* add-on.
 After installation, you find a tab "HELIOS" in the [Scene Properties](https://docs.blender.org/manual/en/latest/scene_layout/scene/properties.html). Here, you can select your HELIOS++ root folder, a sceneparts folder, the location of the scene XML to write and set a scene ID and name. Click export to export the animation.
 
-Lastly, write a survey file to virtually scan the moving tree, e.g. with terrestrial laser scanning from multiple scan positions. Execute the survey with HELIOS++. 
+![grafik](https://user-images.githubusercontent.com/41050948/210845737-5aa93697-a974-4c70-b878-0998d8bb8c71.png)
+
+Lastly, write a survey file to virtually scan the moving tree, e.g. with terrestrial laser scanning (TLS) from multiple scan positions. Execute the survey with HELIOS++. 
 
 <!-- ROADMAP -->
 ## Roadmap
 
-- [ ] Feature 1
-- [ ] Feature 2
-- [ ] Feature 3
+- [ ] Allow custom configuration of movement by txt file with leaf ID and respective leaf rotation at a given keyframe. This should allow animating real observed movement (as, e.g., quantified with TLS).
+- [ ] Explore different way of randomizing animated leaf movement and making it realistic (e.g., partly in sync, completely randomized, longer animations, etc.)
+- [ ] Generate further tree presets (from tree point clouds as template).
+...
 
 See the [open issues](https://github.com/han16nah/movingtree_b2h/issues) for a full list of proposed features (and known issues).
-
 
 
 <!-- LICENSE -->
