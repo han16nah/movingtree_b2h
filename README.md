@@ -15,7 +15,6 @@
       </ul>
     </li>
     <li><a href="#usage">Usage</a></li>
-    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#license">License</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="#acknowledgments">Acknowledgments</a></li>
@@ -72,17 +71,6 @@ After installation, you find a tab "HELIOS" in the [Scene Properties](https://do
 ![grafik](https://user-images.githubusercontent.com/41050948/210868699-f8bb5fab-a3ed-4dfb-a02a-896c5d4aa707.png)
 
 Lastly, write a survey file to virtually scan the moving tree, e.g. with terrestrial laser scanning (TLS) from multiple scan positions. Execute the survey with HELIOS++. 
-
-<!-- ROADMAP -->
-## Roadmap
-
-- [ ] Allow custom configuration of movement by txt file with leaf ID and respective leaf rotation at a given keyframe. This should allow animating real observed movement (as, e.g., quantified with TLS).
-- [ ] Explore different way of randomizing animated leaf movement and making it realistic (e.g., partly in sync, completely randomized, longer animations, etc.)
-- [ ] Generate further tree presets (from tree point clouds as template).
-...
-
-See the [open issues](https://github.com/han16nah/movingtree_b2h/issues) for a full list of proposed features (and known issues).
-
 
 <!-- LICENSE -->
 ## License
