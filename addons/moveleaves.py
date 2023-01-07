@@ -9,8 +9,18 @@ bl_info = {
 
 import bpy
 import numpy as np
+from numpy.random import Generator
 import math
 from mathutils import Quaternion, Matrix, Euler
+
+def fix_sum_random_vec(fix_sum, len, rng):
+    r = rng.integers(0, fix_sum, size=(len-1))
+    r = np.append(r, [0, fix_sum])
+    r.sort()
+    print(r)
+    a = np.diff(r)
+    
+    return a
 
 
 class ObjectMoveLeaves(bpy.types.Operator):
@@ -19,6 +29,7 @@ class ObjectMoveLeaves(bpy.types.Operator):
     bl_label = "Move Leaves"
     bl_options = {'REGISTER', 'UNDO'}
 
+    duration: bpy.props.IntProperty(name="Duration (frames)", default=120, min=0, max=1200)
     fraction: bpy.props.FloatProperty(name="Fraction", default=0.5, min=0, max=1)
     x_mu: bpy.props.FloatProperty(name="X Angle - mean [°]", default=0, min=0, max=360)
     y_mu: bpy.props.FloatProperty(name="Y Angle - mean [°]", default=0, min=0, max=360)
@@ -28,24 +39,22 @@ class ObjectMoveLeaves(bpy.types.Operator):
     z_sigma: bpy.props.FloatProperty(name="Z Angle - standard deviation [°]", default=15, min=0, max=360)
 
     def execute(self, context):
+        rng = np.random.default_rng()
         scene = context.scene
         objects = scene.objects
         leaves = []
         for o in objects:
             if o.name.startswith("leaves"):
                 leaves.append(o)
-        moving_leaf_ids = np.random.choice(len(leaves), size=int(round(self.fraction*len(leaves))), replace=False)
+        moving_leaf_ids = rng.choice(len(leaves), size=int(round(self.fraction*len(leaves))), replace=False)
         moving_leaves = [leaves[i] for i in moving_leaf_ids]
-        # start at frame 0
-        scene.frame_set(0)
         
         for leaf in moving_leaves:
+            # start at frame 0
+            scene.frame_set(0)
             # insert keyframe
             leaf.keyframe_insert(data_path="rotation_euler", index=-1)
-        # move forward 30 frames
-        scene.frame_set(scene.frame_current + 30)
-        
-        for leaf in moving_leaves:
+            
             # get leaf base
             rot_origin = leaf.matrix_world @ leaf.data.vertices[0].co
             # set leaf base as rotation origin
@@ -54,39 +63,20 @@ class ObjectMoveLeaves(bpy.types.Operator):
                 leaf.data.transform(Matrix.Translation(-rot_origin))
                 leaf.location += rot_origin
             
-            # sample Euler angles
-            x_angle = np.random.normal(self.x_mu, self.x_sigma)
-            y_angle = np.random.normal(self.y_mu, self.y_sigma)
-            z_angle = np.random.normal(self.z_mu, self.z_sigma)
-            leaf.rotation_euler = [math.radians(x_angle), math.radians(y_angle), math.radians(z_angle)]
-            # insert keyframe
-            leaf.keyframe_insert(data_path="rotation_euler", index=-1)
-        scene.frame_set(scene.frame_current + 30)
-        
-        for leaf in moving_leaves:    
-            x_angle = np.random.normal(self.x_mu, self.x_sigma)
-            y_angle = np.random.normal(self.y_mu, self.y_sigma)
-            z_angle = np.random.normal(self.z_mu, self.z_sigma)
-            leaf.rotation_mode = leaf.rotation_mode[::-1]
-            leaf.rotation_euler = [math.radians(x_angle), math.radians(y_angle), math.radians(z_angle)]
-            leaf.keyframe_insert(data_path="rotation_euler", index=-1)
-        scene.frame_set(scene.frame_current + 30)
-        
-        for leaf in moving_leaves:
+            # durations of different leaf movements (number of frames)
+            durations = fix_sum_random_vec(self.duration, math.ceil(self.duration/30), rng=rng)
             
-            # sample Euler angles
-            x_angle = np.random.normal(self.x_mu, self.x_sigma)
-            y_angle = np.random.normal(self.y_mu, self.y_sigma)
-            z_angle = np.random.normal(self.z_mu, self.z_sigma)
-            leaf.rotation_mode = leaf.rotation_mode[::-1]
-            leaf.rotation_euler = [math.radians(x_angle), math.radians(y_angle), math.radians(z_angle)]
-            leaf.keyframe_insert(data_path="rotation_euler", index=-1)
-        bpy.context.scene.frame_current = bpy.context.scene.frame_current + 30
-        
-        for leaf in moving_leaves:   
-            leaf.rotation_euler = [0, 0, 0]
-            leaf.keyframe_insert(data_path="rotation_euler", index=-1)
-        scene.frame_set(scene.frame_current + 30)
+            for d in durations:
+                # move forward by duration
+                scene.frame_set(scene.frame_current + d)
+                # sample Euler angles
+                x_angle = rng.normal(self.x_mu, self.x_sigma)
+                y_angle = rng.normal(self.y_mu, self.y_sigma)
+                z_angle = rng.normal(self.z_mu, self.z_sigma)
+                leaf.rotation_euler = [math.radians(x_angle), math.radians(y_angle), math.radians(z_angle)]
+                # insert keyframe
+                leaf.keyframe_insert(data_path="rotation_euler", index=-1)
+                
         
         return {'FINISHED'}
 
