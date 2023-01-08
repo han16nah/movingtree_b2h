@@ -17,7 +17,6 @@ def fix_sum_random_vec(fix_sum, len, rng):
     r = rng.integers(0, fix_sum, size=(len-1))
     r = np.append(r, [0, fix_sum])
     r.sort()
-    print(r)
     a = np.diff(r)
     
     return a
