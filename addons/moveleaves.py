@@ -43,7 +43,7 @@ class ObjectMoveLeaves(bpy.types.Operator):
         objects = scene.objects
         leaves = []
         for o in objects:
-            if o.name.startswith("leaves"):
+            if o.name.startswith("leaves") or o.name.startswith("Leaves"):
                 leaves.append(o)
         moving_leaf_ids = rng.choice(len(leaves), size=int(round(self.fraction*len(leaves))), replace=False)
         moving_leaves = [leaves[i] for i in moving_leaf_ids]
