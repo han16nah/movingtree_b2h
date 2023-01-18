@@ -11,6 +11,9 @@ from movingtree2helios import scene_writer as sw
 
 
 def export_obj(self, context):
+    # make sure, we are at frame 0
+    bpy.context.scene.frame_set(0)
+    
     # Deselect all objects
     for obj in bpy.context.selected_objects:
         obj.select_set(False) 
@@ -28,8 +31,8 @@ def export_obj(self, context):
         if ob.type == 'MESH':
             outfile = str(sceneparts_path / (ob.name + '.obj'))
             
-            if 'leaves.obj' in outfile: 
-                outfile = outfile.replace('leaves.obj', 'leaves.000.obj')
+            if 'leaves.obj' in outfile or 'Leaves.obj' in outfile: 
+                outfile = outfile.replace('leaves.obj', 'leaves.000.obj').replace('Leaves.obj', 'Leaves.000.obj')
             filepaths_relative.append(Path(outfile).relative_to(self.helios_root))
             bpy.ops.export_scene.obj(filepath=outfile, use_selection=True, axis_up='Z', axis_forward='Y', use_materials=False)
 
@@ -38,12 +41,11 @@ def export_obj(self, context):
     return filepaths_relative
     
 
-def write_scene(self, context, obj_paths_relative):
+def write_dyn_scene(self, context, obj_paths_relative):
     
     obj_paths_dynamic = []
     obj_paths_static = []
     sceneparts = ""
-    
     
     # get translation that HELIOS++ will apply (min coordinates of scene bounding box)
     # will not be needed in the long run, because will be fixed within HELIOS++
@@ -142,6 +144,24 @@ def write_scene(self, context, obj_paths_relative):
         f.write(scene)
 
 
+def write_static_scene(self, context, obj_paths_relative):
+    
+    sceneparts = ""
+    
+    # iterate through static obj paths and create scenepart string
+    for path in obj_paths_relative:
+        sp_string = sw.create_scenepart_obj(path)
+        sceneparts += sp_string
+    
+    scene = sw.build_scene(scene_id=self.scene_id, name=self.scene_name, sceneparts=[sceneparts])
+    
+    filepath_static = self.filepath.replace(".xml", "_static.xml")
+    
+    # write scene to file
+    with open(filepath_static, "w") as f:
+        f.write(scene)
+
+
 # multiply 3d coord list by matrix
 def np_matmul_coords(coords, matrix, space=None):
     M = (space @ matrix @ space.inverted()
@@ -166,7 +186,11 @@ class OT_BatchExport_DynHelios(bpy.types.Operator):
         relative_fpaths = export_obj(export, context)
 
         # write the scene XML (incl. motions)
-        write_scene(export, context, relative_fpaths)
+        write_dyn_scene(export, context, relative_fpaths)
+        
+        # write the static scene XML (if filepath is proided)
+        if export.export_static is True:
+            write_static_scene(export, context, relative_fpaths)
         
         return {'FINISHED'}
 
