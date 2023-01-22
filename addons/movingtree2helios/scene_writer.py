@@ -272,7 +272,7 @@ def build_scene(scene_id, name, sceneparts=None, dyn_step=None):
     if dyn_step:
         dyn_step_string = f'dynStep="{dyn_step}"'
     else:
-        dyn_step_string = None
+        dyn_step_string = ""
     scene_content = f"""<?xml version="1.0" encoding="UTF-8"?>
 <document>
     <scene id="{scene_id}" name="{name}" {dyn_step_string}>
