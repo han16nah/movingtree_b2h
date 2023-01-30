@@ -34,7 +34,8 @@ def export_obj(self, context):
             if 'leaves.obj' in outfile or 'Leaves.obj' in outfile: 
                 outfile = outfile.replace('leaves.obj', 'leaves.000.obj').replace('Leaves.obj', 'Leaves.000.obj')
             filepaths_relative.append(Path(outfile).relative_to(self.helios_root))
-            bpy.ops.export_scene.obj(filepath=outfile, use_selection=True, axis_up='Z', axis_forward='Y', use_materials=False)
+            if self.export_sceneparts is True:
+                bpy.ops.export_scene.obj(filepath=outfile, use_selection=True, axis_up='Z', axis_forward='Y', use_materials=False)
 
         ob.select_set(False)
     
@@ -155,8 +156,15 @@ def write_static_scene(self, context, obj_paths_relative):
     
     scene = sw.build_scene(scene_id=self.scene_id, name=self.scene_name, sceneparts=[sceneparts])
     
-    filepath_static = self.filepath.replace(".xml", "_static.xml")
+    filedir = Path(self.filepath).parent
+    filename_parts = Path(self.filepath).stem.split("_")
+    if len(filename_parts) > 1:
+        filename = "_".join(filename_parts[:-1]) + "_static.xml"
+    else:
+        filename = filename_parts[0] + "_static.xml"
     
+    print(filename)
+    filepath_static = (filedir / filename).as_posix()
     # write scene to file
     with open(filepath_static, "w") as f:
         f.write(scene)

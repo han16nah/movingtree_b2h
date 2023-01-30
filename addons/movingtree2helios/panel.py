@@ -7,6 +7,7 @@ class ExportProps(bpy.types.PropertyGroup, ExportHelper):
     helios_root: bpy.props.StringProperty(name="Path to HELIOS++ root_folder", default="helios", subtype="DIR_PATH")
     sceneparts_folder: bpy.props.StringProperty(name="Name of sceneparts folder", default="tree1")
     export_static: bpy.props.BoolProperty(name="Also export static scene?", default=True)
+    export_sceneparts: bpy.props.BoolProperty(name="Export scene parts?", default=True)
     scene_id: bpy.props.StringProperty(name="ID of the scene", default="moving_tree1")
     scene_name: bpy.props.StringProperty(name="Name of the scene", default="Tree with moving leaves")
 
@@ -37,6 +38,9 @@ class PT_helios(bpy.types.Panel):
         
         row = layout.row()
         row.prop(props, "export_static")
+        
+        row = layout.row()
+        row.prop(props, "export_sceneparts")
         
         split = layout.split()
         col = split.column()
