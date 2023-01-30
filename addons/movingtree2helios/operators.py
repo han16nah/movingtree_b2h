@@ -50,19 +50,19 @@ def write_dyn_scene(self, context, obj_paths_relative):
     # get translation that HELIOS++ will apply (min coordinates of scene bounding box)
     # will not be needed in the long run, because will be fixed within HELIOS++
     # get the global coordinates of all object bounding box corners    
-    coords = np.vstack(
-    tuple(np_matmul_coords(np.array(o.bound_box), o.matrix_world.copy())
-         for o in  
-            context.scene.objects
-            if o.type == 'MESH'
-            )
-        )
-    print("#" * 72)
+    # coords = np.vstack(
+    # tuple(np_matmul_coords(np.array(o.bound_box), o.matrix_world.copy())
+    #      for o in  
+    #         context.scene.objects
+    #         if o.type == 'MESH'
+    #         )
+    #     )
+    # print("#" * 72)
     # bottom front left (all the mins)
-    bfl = coords.min(axis=0)
-    print(bfl)
+    # bfl = coords.min(axis=0)
+    # print(bfl)
     # convert to vector
-    helios_shift = Vector(bfl)
+    # helios_shift = Vector(bfl)
     # helios_shift = Vector((-0.380767, -0.359708, -0.000033))
 
     
@@ -122,7 +122,7 @@ def write_dyn_scene(self, context, obj_paths_relative):
                     prev_rot = rot.to_quaternion()
                 
                 # add to dynamic motion string
-                dynm_string += sw.add_motion_rotation(id = f"{leaf_id}_{j}", axis=axis, angle=angle, rotation_center=rot_centre-helios_shift, nloops=frame_diff, next = f"{leaf_id}_{next_id}")
+                dynm_string += sw.add_motion_rotation(id = f"{leaf_id}_{j}", axis=axis, angle=angle, rotation_center=rot_centre, nloops=frame_diff, next = f"{leaf_id}_{next_id}")
                 j+= 1
             sp_string = sw.create_scenepart_obj(path, motionfilter=dynm_string, kdt_dyn_step=100)
             sceneparts += sp_string     

@@ -84,6 +84,7 @@ class ObjectMoveLeaves(bpy.types.Operator):
     bl_label = "Move Leaves"
     bl_options = {'REGISTER', 'UNDO'}
 
+    seed: bpy.props.IntProperty(name="Random seed", default=42)
     duration: bpy.props.IntProperty(name="Duration (frames)", default=120, min=0, max=1200)
     lad: bpy.props.StringProperty(name="Leaf angle distribution", default="")
     fraction: bpy.props.FloatProperty(name="Fraction", default=1.0, min=0, max=1)
@@ -96,7 +97,7 @@ class ObjectMoveLeaves(bpy.types.Operator):
     z_sigma: bpy.props.FloatProperty(name="Z Angle - standard deviation [°]", default=2, min=0, max=360)
 
     def execute(self, context):
-        rng = np.random.default_rng()
+        rng = np.random.default_rng(seed=self.seed)
         scene = context.scene
         fps = scene.render.fps
         objects = scene.objects
