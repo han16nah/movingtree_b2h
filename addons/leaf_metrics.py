@@ -15,11 +15,7 @@ def get_leaf_angles(leaf_objects):
     # get normal vectors of all leaves
     for i, leaf in enumerate(leaf_objects):
         assert(leaf.type == 'MESH')
-                    
-        # get leaf base
-        rot_origin = leaf.matrix_world @ leaf.data.vertices[0].co
-            
-            
+
         # get normal vector
         # any face from the mesh will do, as leaves are all planar, so let's just get the first
         normal_vec = leaf.data.polygons[0].normal.to_4d()
@@ -40,23 +36,20 @@ def get_leaf_angles(leaf_objects):
 
 
 def get_leaf_area(leaf_objects):
-    total_area = 0
-    
+    areas = []
     for obj in leaf_objects:
-        print(obj.name)
         assert(obj.type == 'MESH')
 
         bm = bmesh.new()
         bm.from_mesh(obj.data)
 
         area = sum(f.calc_area() for f in bm.faces)
-        print(area)
         
-        total_area += area
+        areas.append(area)
         
         bm.free()
     
-    return total_area
+    return areas
 
 
 if __name__ == "__main__":
@@ -82,6 +75,8 @@ if __name__ == "__main__":
     np.savetxt(Path(output_directory) / f"{project_name}_leaf_zenith_angles.txt", zenith_angles, fmt='%.8f')
     np.savetxt(Path(output_directory) / f"{project_name}_leaf_azimuth_angles.txt", azimuth_angles, fmt='%.8f')
 
-    leaf_area = get_leaf_area(leaves)
+    leaf_areas = get_leaf_area(leaves)
     
-    print(f"{leaf_area} m2")
+    print(f"Number of leaves: {len(leaves)}")
+    print(f"{np.sum(leaf_areas):.4f} m2")
+    print(f"Mean leaf area: {np.mean(leaf_areas):.4f} m2")
