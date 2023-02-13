@@ -10,6 +10,7 @@ This script contains functions to configure and write HELIOS++ scenes.
 """
 
 import warnings
+from typing import Iterable
 
 
 def add_transformation_filters(translation: list = None,
@@ -67,31 +68,31 @@ def add_transformation_filters(translation: list = None,
 
 
 def add_motion_rotation(id: str,
-                        rotation_center, axis, angle: float,
+                        axis, angle: float,
+                        rotation_center: Iterable[float] = None, 
                         nloops: int = 0,
                         selfmode_flag: bool = False,
-                        next: str = False):
-    axis_string = f"{axis[0]};{axis[1]};{axis[2]}"
+                        next: str = False,
+                        decimal_places: int = 8):
+    axis_string = f'{axis[0]:.{decimal_places}f};{axis[1]:.{decimal_places}f};{axis[2]:.{decimal_places}f}'
     if next:
         next_str = f'next="{next}"'
     else:
-        next_str = ""
-    if selfmode_flag:
-        dmfilter = f"""
-            <dmotion id="{id}" loop="{nloops}" {next_str}">
-              <motion type="rotation" axis="{axis_string}" angle="{angle}" />
-            </dmotion>
-            """
+        next_str = ''
+    if selfmode_flag is True and rotation_center is None:
+        selfmode_string = ' selfMode="true"'
     else:
-        t1_string = f"{-rotation_center[0]};{-rotation_center[1]};{-rotation_center[2]}"
-        t2_string = f"{rotation_center[0]};{rotation_center[1]};{rotation_center[2]}"
-        dmfilter = f"""
+        selfmode_string = ''
+    if rotation_center is not None:
+        center_string = f' center="{rotation_center[0]:.{decimal_places}f};{rotation_center[1]:.{decimal_places}f};{rotation_center[2]:.{decimal_places}f}" autoCRS="1"'
+    else:
+        center_string = ''
+    dmfilter = f'''
             <dmotion id="{id}" loop="{nloops}" {next_str}>
-              <motion type="translation" vec="{t1_string}" />
-              <motion type="rotation" axis="{axis_string}" angle="{angle}" />
-              <motion type="translation" vec="{t2_string}" />
+              <motion type="rotation" axis="{axis_string}" angle="{angle:.{decimal_places}f}"{selfmode_string}{center_string}/>
             </dmotion>
-        """
+            '''
+        
     return dmfilter
 
 
