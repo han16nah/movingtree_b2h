@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------#
 # AUTHOR: Alberto M. Esmoris Pena                                            #
 #                                                                            #
-# Useful plots in the context of VirtuaLearn3D project                       #
+# Useful plots                                                               #
 # ---------------------------------------------------------------------------#
 
 
@@ -115,9 +115,9 @@ def plot_features_histogram(
         Fi = F[:, i]
         ax = fig.add_subplot(nrows, ncols, i+1)
         ax.hist(Fi, color=barcolor)
-        ax.axvline(np.mean(Fi), color=mucolor, lw=2, label='$\\mu$')
+        ax.axvline(np.nanmean(Fi), color=mucolor, lw=2, label='$\\mu$')
         ax.axvline(
-            np.median(Fi), color=sigmacolor, lw=2, ls='--', label='$\\sigma$'
+            np.nanmedian(Fi), color=sigmacolor, lw=2, ls='--', label='$\\sigma$'
         )
         if features is not None:
             ax.set_title(features[i], fontsize=16)
@@ -420,94 +420,3 @@ def _plot_features_per_class_hist2d(
     # Add colorbar
     cb = fig.colorbar(im)
     cb.ax.tick_params(axis='both', which='both', labelsize=16)
-
-
-# ---  PLOT MODEL EVALUATION  --- #
-# ------------------------------- #
-def plot_models_by_score(
-    model_names,
-    model_scores,
-    model_stdevs=None,
-    best_th=0.9,
-    good_th=0.8,
-    acceptable_th=0.7,
-    figsize=(16, 10),
-    title='Model comparison by score',
-    xlabel='Model',
-    ylabel='Score'
-):
-    """Plot a comparison between mutliple models based on a given score
-    :param model_names: The name for each model.
-    :param model_scores: The score for each model.
-    :param model_stdevs: The standard deviation of the score for each model.
-        It can be None if no standard deviations are known.
-    :param best_th: The threshold such that models with a score above this
-        value are considered as the best models.
-    :param good_th: The threshold such that models with a score above this
-        value are considered as good models.
-    :param acceptable_th: The threshold such that models with a score above
-        this value are considered as acceptable models.
-    :param figsize: Define the size of the figure.
-    :param title: The title for the plot.
-    :param ylabel: The label for the y-axis.
-    :param xlabel: The label for the x-axis.
-    """
-    # Prepare plot
-    fig = plt.figure(figsize=(16, 10))
-    ax = fig.add_subplot(1, 1, 1)
-    color = []
-    if best_th is not None and \
-            good_th is not None and \
-            acceptable_th is not None:
-        relop = lambda a, b: a >= b
-        if best_th < good_th:
-            relop = lambda a, b: a <= b
-        for score in model_scores:
-            if relop(score, best_th):
-                color.append('green')
-            elif relop(score, good_th):
-                color.append('darkcyan')
-            elif relop(score, acceptable_th):
-                color.append('skyblue')
-            else:
-                color.append('gray')
-    else:
-        color = 'tab:blue'
-    # Plot bars
-    ax.bar(
-        model_names, model_scores,
-        color=color, yerr=model_stdevs,
-        edgecolor='black', linewidth=2,
-        error_kw={
-            'ecolor': 'red',
-            'capsize': 10,
-            'markeredgewidth': 3
-        }
-    )
-    # Plot thresholds
-    if best_th is not None:
-        ax.axhline(
-            best_th, color='green', lw=3, ls='-', zorder=0, label='best'
-        )
-    if good_th is not None:
-        ax.axhline(
-            good_th, color='darkcyan', lw=3, ls='-', zorder=0, label='good'
-        )
-    if acceptable_th is not None:
-        ax.axhline(
-            acceptable_th, color='skyblue', lw=3,
-            ls='-', zorder=0, label='acceptable'
-        )
-    # Format plot
-    ax.set_title(title, fontsize=20)
-    ax.set_xlabel(xlabel, fontsize=18)
-    ax.set_ylabel(ylabel, fontsize=18)
-    ax.grid('both')
-    ax.set_axisbelow(True)
-    ax.tick_params(axis='both', which='both', labelsize=16, labelrotation=60.0)
-    ax.legend(loc='upper right', fontsize=16, bbox_to_anchor=(1.2, 1.0))
-    for tick in ax.xaxis.get_majorticklabels():
-        tick.set_horizontalalignment("right")
-    fig.tight_layout()
-    # Show plot
-    plt.show()
