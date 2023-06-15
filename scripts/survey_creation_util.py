@@ -16,15 +16,15 @@ import xml.etree.ElementTree as ET
 
 d = Path(os.getcwd()).parent
 sys.path.append(str(d / "addons/movingtree2helios"))
-import scene_writer as sp
+# import scene_writer as sp
 
 mpl.rcParams["axes.spines.top"] = False
 mpl.rcParams["axes.spines.right"] = False
-mpl.rcParams["axes.labelsize"] = 14
-mpl.rcParams["xtick.labelsize"] = 14
-mpl.rcParams["ytick.labelsize"] = 14
-mpl.rcParams["ytick.labelsize"] = 14
-plt.style.use("ggplot")
+mpl.rcParams["axes.labelsize"] = 16
+mpl.rcParams["xtick.labelsize"] = 16
+mpl.rcParams["ytick.labelsize"] = 16
+mpl.rcParams["ytick.labelsize"] = 16
+# plt.style.use("ggplot")
 
 
 def rotate_around_point(xy, degrees, origin=(0, 0)):
@@ -65,7 +65,7 @@ def get_wp_and_fov_from_xml(xml: str):
     return x, y, head_rot_start, head_rot_stop
 
 
-def plot_measurement_plan(xml_legs, object_position, path):
+def plot_measurement_plan(xml_legs, object_position, path, dpi=300):
     """Plot the measurement plan for given legs (TLS case!)"""
     x, y, head_rot_start, head_rot_stop = get_wp_and_fov_from_xml(xml_legs)
 
@@ -83,18 +83,18 @@ def plot_measurement_plan(xml_legs, object_position, path):
         line_b2 = np.vstack((a, b2))
         plt.plot(line_b1[:, 0], line_b1[:, 1], color="grey", alpha=0.5)
         fov_line, = plt.plot(line_b2[:, 0], line_b2[:, 1], color="grey", alpha=0.5, label="Field of view")
-    plt.xlabel("X")
-    plt.ylabel("Y")
+    plt.xlabel("X [m]")
+    plt.ylabel("Y [m]")
     # plt.axis("scaled")
     # plt.legend(handles=[scan_pos, tree_pos, fov_line], bbox_to_anchor=(1.04, 0.5), loc="center left", borderaxespad=0)
     # plt.legend(handles=[scan_pos, tree_pos, fov_line], loc="upper right")
-    plt.text(0, -0.5, "Tree position", ha="center", color="g", size=14)
-    plt.text(1.8, 3, "Scan position", ha="center", size=14)
+    plt.text(0, -0.75, "Tree position", ha="center", color="g", size=16)
+    plt.text(1.9, 3, "Scan position", ha="center", size=16)
     # plt.text(-2.5, 0, "Field of view", va="center", color="grey", size=12)
-    plt.text(-1.9, 1.45, "Field of view", va="center", color="grey", size=14, rotation=30)
+    plt.text(-1.99, 1.29, "Field of view", va="center", color="grey", size=16, rotation=30)
     plt.axis('square')
-    plt.savefig(path, dpi=300)
-    # plt.show()
+    plt.savefig(path, dpi=dpi)
+    plt.show()
     plt.clf()
 
 

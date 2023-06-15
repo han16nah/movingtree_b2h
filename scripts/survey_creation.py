@@ -27,6 +27,7 @@ scene_names = [Path(f).stem for f in scene_files]
 survey_files_tls = [(Path(helios_root) / survey_directory_tls / f"tls_{name}.xml").as_posix() for name in scene_names]
 survey_files_uls = [(Path(helios_root) / survey_directory_uls / f"uls_{name}.xml").as_posix() for name in scene_names]
 plot_dir = "H:/movingtree_b2h/data/plots"
+dpi = 300
 
 # TLS survey
 ############
@@ -63,8 +64,8 @@ for scene, survey in zip(scene_files, survey_files_tls):
                                           scene_id,
                                           legs)
 
-    #with open(survey, "w") as f:
-    #    f.write(survey_content)
+    # with open(survey, "w") as f:
+    #     f.write(survey_content)
 
 # ULS survey
 ############
@@ -89,14 +90,31 @@ figure = plt.figure(figsize=(5, 5), tight_layout=True)
 plt.scatter(uls_traj1_c[:, 0], uls_traj1_c[:, 1], s=3)
 plt.scatter(uls_traj2_c[:, 0], uls_traj2_c[:, 1], s=3)
 plt.scatter([0], [0], marker="*", s=400, c="g")
-plt.xlabel("X")
-plt.ylabel("Y")
-plt.text(1, 1.7, "Second grid", c="#E24A33", size=14)
-plt.text(2, 4.2, "First grid", c="#348ABD", size=14)
+plt.xlabel("X [m]")
+plt.ylabel("Y [m]")
+plt.text(0.5, 2.4, "Second grid", c="#E24A33", size=16)
+plt.text(1.6, 4.4, "First grid", c="#348ABD", size=16)
 plt.axis('square')
-plt.savefig(Path(plot_dir) / "uls_survey.png", dpi=300)
-# plt.show()
-plt.clf()
+plt.savefig(Path(plot_dir) / "uls_survey.png", dpi=dpi)
+plt.show()
+# plt.clf()
+
+# plot the trajectory in 3D
+fig = plt.figure()
+ax = fig.add_subplot(projection='3d')
+ax.scatter(uls_traj1_c[:, 0], uls_traj1_c[:, 1], uls_traj1_c[:, 2], s=2)
+ax.scatter(uls_traj2_c[:, 0], uls_traj2_c[:, 1], uls_traj2_c[:, 2], s=2)
+ax.scatter([0], [0], [0], marker="*", s=400, c="g")
+ax.set_xlabel("X")
+ax.set_ylabel("Y")
+ax.set_zlabel("Z")
+ax.text(2.5, -3.5, 12, "Second grid", c="#E24A33", size=14)
+ax.text(1.25, 1., 15, "First grid", c="#348ABD", size=14)
+# plt.axis('square')
+# plt.savefig(Path(plot_dir) / "uls_survey.png", dpi=300)
+plt.show()
+# plt.clf()
+
 
 # write clipped trajectory to file
 uls_traj_file1_c = "data/trajectories/uls_traj1.txt"
@@ -185,11 +203,11 @@ for scene, survey in zip(scene_files, survey_files_uls):
     with open(survey, "w") as f:
         f.write(survey_content)
 
-#with open(Path(helios_root) / survey_directory_tls / "helios_commands.txt", "w") as cf:
-#    for survey in survey_files_tls:
-#        cf.write(rf"run\helios {Path(survey).relative_to(helios_root)} --lasOutput --zipOutput")
-#        cf.write("\n")
-#
+with open(Path(helios_root) / survey_directory_tls / "helios_commands.txt", "w") as cf:
+    for survey in survey_files_tls:
+        cf.write(rf"run\helios {Path(survey).relative_to(helios_root)} --lasOutput --zipOutput")
+        cf.write("\n")
+
 with open(Path(helios_root) / survey_directory_uls / "helios_commands.txt", "w") as cf:
     for survey in survey_files_uls:
         cf.write(rf"run\helios {Path(survey).relative_to(helios_root)} --lasOutput --zipOutput")
