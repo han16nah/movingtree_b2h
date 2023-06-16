@@ -19,9 +19,11 @@ for obj in objects:
         bpy.ops.mesh.separate(type = 'LOOSE')
         bpy.ops.object.mode_set(mode = 'OBJECT')
 
+
 # get any curve object (= tree stem/branches) and convert to mesh
 for obj in objects:
     if obj.type == 'CURVE':
+        bpy.ops.object.select_all(action='DESELECT')
         obj.select_set(True)
         bpy.ops.object.convert(target='MESH')
         bpy.ops.object.select_all(action='DESELECT')
