@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <document>
+        <scannerSettings id="uls" active="true" pulseFreq_hz="300000" scanFreq_hz="100" />
+        <survey name="uls_tree10_a" platform="interpolated" baseplatform="copter_linearpath" scanner="data/scanners_als.xml#riegl_vux-1uav22" scene="data/scenes/movingtrees/tree10_a.xml#tree10">
+            
+        <leg>
+            <platformSettings 
+                trajectory="data/trajectories/uls_traj1.txt" teleportToStart="true"
+                tIndex="3" xIndex="0" yIndex="1" zIndex="2" rollIndex="4" pitchIndex="5" yawIndex="6"
+                slopeFilterThreshold="0.0" toRadians="true" syncGPSTime="true"
+                tStart="283721.9375" tEnd="283724.53125"
+            />
+            <scannerSettings template="uls" trajectoryTimeInterval_s="0.03"/>
+        </leg>
+       
+        <leg>
+            <platformSettings 
+                trajectory="data/trajectories/uls_traj1.txt" teleportToStart="true"
+                slopeFilterThreshold="0.0" toRadians="true" syncGPSTime="true"
+                tStart="283745.71875" tEnd="283747.46875"
+            />
+            <scannerSettings template="uls" trajectoryTimeInterval_s="0.03"/>
+        </leg>
+       
+        <leg>
+            <platformSettings 
+                trajectory="data/trajectories/uls_traj1.txt" teleportToStart="true"
+                slopeFilterThreshold="0.0" toRadians="true" syncGPSTime="true"
+                tStart="283925.21875" tEnd="283927.59375"
+            />
+            <scannerSettings template="uls" trajectoryTimeInterval_s="0.03"/>
+        </leg>
+       
+        <leg>
+            <platformSettings 
+                trajectory="data/trajectories/uls_traj1.txt" teleportToStart="true"
+                slopeFilterThreshold="0.0" toRadians="true" syncGPSTime="true"
+                tStart="283949.375" tEnd="283951.03125"
+            />
+            <scannerSettings template="uls" trajectoryTimeInterval_s="0.03"/>
+        </leg>
+       
+        <leg>
+            <platformSettings 
+                trajectory="data/trajectories/uls_traj2.txt" teleportToStart="true"
+                tIndex="3" xIndex="0" yIndex="1" zIndex="2" rollIndex="4" pitchIndex="5" yawIndex="6"
+                slopeFilterThreshold="0.0" toRadians="true" syncGPSTime="true"
+                tStart="285063.4375" tEnd="285065.46875"
+            />
+            <scannerSettings template="uls" trajectoryTimeInterval_s="0.03"/>
+        </leg>
+       
+        <leg>
+            <platformSettings 
+                trajectory="data/trajectories/uls_traj2.txt" teleportToStart="true"
+                slopeFilterThreshold="0.0" toRadians="true" syncGPSTime="true"
+                tStart="285085.1875" tEnd="285087.125"
+            />
+            <scannerSettings template="uls" trajectoryTimeInterval_s="0.03"/>
+        </leg>
+       
+        <leg>
+            <platformSettings 
+                trajectory="data/trajectories/uls_traj2.txt" teleportToStart="true"
+                slopeFilterThreshold="0.0" toRadians="true" syncGPSTime="true"
+                tStart="285232.53125" tEnd="285234.4375"
+            />
+            <scannerSettings template="uls" trajectoryTimeInterval_s="0.03"/>
+        </leg>
+       
+        <leg>
+            <platformSettings 
+                trajectory="data/trajectories/uls_traj2.txt" teleportToStart="true"
+                slopeFilterThreshold="0.0" toRadians="true" syncGPSTime="true"
+                tStart="285255.5" tEnd="285257.34375"
+            />
+            <scannerSettings template="uls" trajectoryTimeInterval_s="0.03"/>
+        </leg>
+       
+        </survey>
+    </document>
+    
