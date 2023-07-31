@@ -43,7 +43,7 @@ def export_obj(self, context):
     
 
 def write_dyn_scene(self, context, obj_paths_relative):
-    
+    print("Starting writing dynamic scene")
     obj_paths_dynamic = []
     obj_paths_static = []
     sceneparts = ""
@@ -69,10 +69,12 @@ def write_dyn_scene(self, context, obj_paths_relative):
     
     objects = bpy.context.view_layer.objects
     objects = [ob for ob in objects if ob.type == 'MESH']
+    print(objects)
     
     for i, ob in enumerate(objects):
         frames = []
         rotations = []
+        locations = []
         try:
             for f in ob.animation_data.action.fcurves:
                 for k in f.keyframe_points:
@@ -80,12 +82,16 @@ def write_dyn_scene(self, context, obj_paths_relative):
                     bpy.context.scene.frame_set(int(fr))
                     frames.append(int(fr))
                     rotations.append(ob.rotation_euler.copy().freeze())
+                    locations.append(ob.location.copy().freeze())
                 break
         except AttributeError:
+            print("not a dynamic object")
             # ignore attribute error - happens on objects without animation data, e.g., the tree stem
             pass
         # check if moving object (i.e., rotations are different between keyframes)
-        if len(set(rotations)) > 1:
+        if len(set(rotations)) or len(set(locations)) > 1:
+            print(rotations)
+            print(locations)
             sceneparts += "\n\t\t<!--Dynamic scenepart-->"
             dynm_string = ""
             leaf_id = str(obj_paths_relative[i]).split("\\")[-1].replace(".obj", "")
@@ -94,7 +100,8 @@ def write_dyn_scene(self, context, obj_paths_relative):
             rot_centre = ob.location
             j = 0
             prev_rot = Euler((0, 0, 0)).to_quaternion()
-            for frame, rot in zip(frames, rotations):
+            prev_loc = Vector((0, 0, 0))
+            for frame, rot, loc in zip(frames, rotations, locations):
                 # determines number of loops
                 frame_diff = frame - prev_frame
                 if frame_diff == 0:
@@ -112,20 +119,25 @@ def write_dyn_scene(self, context, obj_paths_relative):
                 axis, angle = new_rot.to_axis_angle()
                 axis = axis[:]
                 
+                new_t = prev_loc - loc
+                
                 # determine if to continue with next dmotion or with first one (i.e., restart loop)
                 if j+1 == len(frames):
                     next_id = 1
                     prev_frame = 0
                     prev_rot = Euler((0, 0, 0)).to_quaternion()
+                    prev_loc = Vector((0, 0, 0))
                 else:
                     next_id = j+1
                     prev_frame = frame
                     prev_rot = rot.to_quaternion()
+                    prev_loc = loc
                 
                 # add to dynamic motion string
-                dynm_string += sw.add_motion_rotation(id = f"{leaf_id}_{j}", axis=axis, angle=angle, rotation_center=rot_centre, nloops=frame_diff, next = f"{leaf_id}_{next_id}")
+                # dynm_string += sw.add_motion_rotation(id = f"{leaf_id}_{j}", axis=axis, angle=angle, rotation_center=rot_centre, nloops=frame_diff, next = f"{leaf_id}_{next_id}")
+                dynm_string += sw.add_motion_rot_tran(id = f"{leaf_id}_{j}", axis=axis, angle=angle, x=new_t[0], y=new_t[1], z=new_t[2], rotation_center=rot_centre, nloops=frame_diff, next = f"{leaf_id}_{next_id}")
                 j+= 1
-            sp_string = sw.create_scenepart_obj(path, motionfilter=dynm_string, kdt_dyn_step=100)
+            sp_string = sw.create_scenepart_obj(path, motionfilter=dynm_string, kdt_dyn_step=10/24)
             sceneparts += sp_string     
                     
         else:
@@ -138,8 +150,9 @@ def write_dyn_scene(self, context, obj_paths_relative):
         sp_string = sw.create_scenepart_obj(path)
         sceneparts += sp_string
     
-    scene = sw.build_scene(scene_id=self.scene_id, name=self.scene_name, sceneparts=[sceneparts], dyn_step=12500)
+    scene = sw.build_scene(scene_id=self.scene_id, name=self.scene_name, sceneparts=[sceneparts], dyn_time_step=1/24)
     
+    print(self.filepath)
     # write scene to file
     with open(self.filepath, "w") as f:
         f.write(scene)
@@ -192,11 +205,11 @@ class OT_BatchExport_DynHelios(bpy.types.Operator):
         
         # export objects (to OBJ files) 
         relative_fpaths = export_obj(export, context)
-
+        
         # write the scene XML (incl. motions)
         write_dyn_scene(export, context, relative_fpaths)
         
-        # write the static scene XML (if filepath is proided)
+        # write the static scene XML (if filepath is provided)
         if export.export_static is True:
             write_static_scene(export, context, relative_fpaths)
         

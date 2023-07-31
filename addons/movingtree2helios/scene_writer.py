@@ -96,6 +96,57 @@ def add_motion_rotation(id: str,
     return dmfilter
 
 
+def add_motion_translation(id: str, 
+                           x: float,
+                           y: float,
+                           z: float,
+                           nloops: int = 0,
+                           next: str = False,
+                           decimal_places: int = 8):
+    if next:
+        next_str = f'next="{next}"'
+    else:
+        next_str = ''
+    dmfilter = f'''
+            <dmotion id="{id}" loop="{nloops}" {next_str}>
+              <motion type="translation" vec="{x:.{decimal_places}f};{y:.{decimal_places}f};{z:.{decimal_places}f}"/>
+            </dmotion>
+            '''
+        
+    return dmfilter
+
+
+def add_motion_rot_tran(id: str,
+                        axis, angle: float,
+                        x: float, y: float, z: float,
+                        rotation_center: Iterable[float] = None, 
+                        nloops: int = 0,
+                        selfmode_flag: bool = False,
+                        next: str = False,
+                        decimal_places: int = 8):
+    axis_string = f'{axis[0]:.{decimal_places}f};{axis[1]:.{decimal_places}f};{axis[2]:.{decimal_places}f}'
+    vec_string = f'{x:.{decimal_places}f};{y:.{decimal_places}f};{z:.{decimal_places}f}'
+    if next:
+        next_str = f'next="{next}"'
+    else:
+        next_str = ''
+    if selfmode_flag is True and rotation_center is None:
+        selfmode_string = ' selfMode="true"'
+    else:
+        selfmode_string = ''
+    if rotation_center is not None:
+        center_string = f' center="{rotation_center[0]:.{decimal_places}f};{rotation_center[1]:.{decimal_places}f};{rotation_center[2]:.{decimal_places}f}" autoCRS="1"'
+    else:
+        center_string = ''
+    dmfilter = f'''
+            <dmotion id="{id}" loop="{nloops}" {next_str}>
+              <motion type="rotation" axis="{axis_string}" angle="{angle:.{decimal_places}f}"{selfmode_string}{center_string}/>
+              <motion type="translation" vec="{vec_string}"/>
+            </dmotion>
+            '''
+    return dmfilter
+
+
 def create_scenepart_obj(filepath: str, up_axis: str = "z", trafofilter: str = "",
                          efilepath: bool = False, sp_id: str = None,
                          motionfilter: str = "", dyn_step: int = None, kdt_dyn_step: int = None):
@@ -253,7 +304,7 @@ def create_scenepart_vox(filepath, trafofilter="", intersection_mode="transmitti
     return scenepart
 
 
-def build_scene(scene_id, name, sceneparts=None, dyn_step=None):
+def build_scene(scene_id, name, sceneparts=None, dyn_step=None, dyn_time_step=None):
     """This function creates the content to write to the scene.xml file
 
     :param scene_id: ID of the scene
@@ -272,6 +323,8 @@ def build_scene(scene_id, name, sceneparts=None, dyn_step=None):
     sceneparts = "\n".join(sceneparts)
     if dyn_step:
         dyn_step_string = f'dynStep="{dyn_step}"'
+    elif dyn_time_step:
+        dyn_step_string = f'dynTimeStep="{dyn_time_step}"'
     else:
         dyn_step_string = ""
     scene_content = f"""<?xml version="1.0" encoding="UTF-8"?>
